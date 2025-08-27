@@ -4,10 +4,6 @@ import { PopulationApiResponse, Prefecture } from "@/lib/types";
 import styles from "@/styles/ApiInfoPanel.module.scss";
 import { useState } from "react";
 
-interface ApiInfoPanelProps {
-  initialPrefectures?: Prefecture[];
-}
-
 interface PrefectureApiResponse {
   message: string | null;
   result: Prefecture[];
@@ -18,7 +14,7 @@ interface PrefectureApiResponse {
  * ゆめみAPIの接続状況とデータを表示する
  * エンドポイント: https://yumemi-frontend-engineer-codecheck-api.vercel.app
  */
-export default function ApiInfoPanel({ initialPrefectures = [] }: ApiInfoPanelProps) {
+export default function ApiInfoPanel() {
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [apiDataPrefectures, setApiDataPrefectures] = useState<PrefectureApiResponse | null>(null);

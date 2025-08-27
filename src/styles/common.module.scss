@@ -1,6 +1,8 @@
 @use "../styles/mixins" as mix;
 @use "../styles/variables" as vars;
+@use "sass:map";
+
 .subTitle {
   margin: 3em 0 0;
-  font-size: #{map-get(vars.$font-sizes, xl)};
+  font-size: #{map.get(vars.$font-sizes, xl)};
 }

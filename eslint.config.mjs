@@ -1,6 +1,6 @@
+import { FlatCompat } from "@eslint/eslintrc";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
-import { FlatCompat } from "@eslint/eslintrc";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -11,23 +11,15 @@ const compat = new FlatCompat({
 
 const eslintConfig = [
   ...compat.extends("next/core-web-vitals", "next/typescript"),
-  // Prettierとの統合
+  // Prettier統合（正しい方法）
   ...compat.extends("prettier"),
-  {
+  ...compat.config({
+    plugins: ["prettier"],
     rules: {
-      // Prettierと競合するルールを無効化
-      "prettier/prettier": [
-        "error",
-        {
-          semi: true,
-          trailingComma: "es5",
-          singleQuote: false,
-          printWidth: 120,
-          tabWidth: 2,
-          useTabs: false,
-        },
-      ],
+      "prettier/prettier": "error",
     },
+  }),
+  {
     ignores: ["node_modules/**", ".next/**", "out/**", "build/**", "next-env.d.ts"],
   },
 ];

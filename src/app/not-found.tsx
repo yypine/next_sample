@@ -10,9 +10,7 @@ export default function NotFound() {
     <div className="mainContent">
       <main style={{ textAlign: "center", padding: "2rem" }}>
         <h1 className="mainTitle">404 - ページが見つかりません</h1>
-        <p style={{ margin: "1rem 0" }}>
-          お探しのページは見つかりませんでした。
-        </p>
+        <p style={{ margin: "1rem 0" }}>お探しのページは見つかりませんでした。</p>
         <Link
           href="/"
           style={{

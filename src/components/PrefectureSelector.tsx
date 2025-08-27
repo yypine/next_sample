@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import styles from "@/styles/page.module.scss";
-import common from "@/styles/common.module.scss";
 import SelectedPrefecturesDisplay from "@/components/SelectedPrefecturesDisplay";
 import { Prefecture } from "@/lib/types";
+import common from "@/styles/common.module.scss";
+import styles from "@/styles/page.module.scss";
+import { useEffect, useState } from "react";
 
 interface PrefectureSelectorProps {
   prefectures: Prefecture[];
@@ -43,7 +43,11 @@ export default function PrefectureSelector({ prefectures }: PrefectureSelectorPr
       <div className={styles.prefectureList}>
         {prefectures.map((prefecture) => (
           <label key={prefecture.prefCode} className={styles.prefectureItem}>
-            <input type="checkbox" checked={selectedPrefectures.some((p) => p.prefCode === prefecture.prefCode)} onChange={() => handlePrefectureChange(prefecture)} />
+            <input
+              type="checkbox"
+              checked={selectedPrefectures.some((p) => p.prefCode === prefecture.prefCode)}
+              onChange={() => handlePrefectureChange(prefecture)}
+            />
             <span className={styles.prefectureName}>{prefecture.prefName}</span>
           </label>
         ))}
