@@ -1,0 +1,16 @@
+@use "../styles/mixins" as mix;
+@use "../styles/variables" as vars;
+.subTitle {
+  margin: 1em 0 0;
+}
+.prefectureList {
+  margin: 0.5em 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  @include mix.media(sm) {
+    //font-size: #{map-get(vars.$font-sizes, xxxl)};
+  }
+  label {
+    padding: 0.5em 0.5em 0.5em 0;
+  }
+}

@@ -1,0 +1,92 @@
+@use "../styles/variables" as vars;
+@use "../styles/mixins" as mix;
+
+// ルート要素でのベースフォントサイズ設定
+:root {
+  --background: #{map-get(vars.$colors, white)};
+  --foreground: #{map-get(vars.$colors, black)};
+
+  // フォントサイズのCSS変数（レスポンシブ対応）
+  --font-size-xs: 0.75rem; // 12px
+  --font-size-sm: 0.875rem; // 14px
+  --font-size-base: 1rem; // 16px (ベース)
+  --font-size-lg: 1.125rem; // 18px
+  --font-size-xl: 1.25rem; // 20px
+  --font-size-2xl: 1.5rem; // 24px
+  --font-size-3xl: 1.875rem; // 30px
+  --font-size-4xl: 2.25rem; // 36px
+  --font-size-5xl: 3rem; // 48px
+
+  // ライン・ハイト
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+
+  // レスポンシブフォントサイズ（モバイル向け調整）
+  @include mix.media-max(sm) {
+    --font-size-xs: 0.6875rem; // 11px
+    --font-size-sm: 0.8125rem; // 13px
+    --font-size-base: 0.9375rem; // 15px
+    --font-size-lg: 1rem; // 16px
+    --font-size-xl: 1.125rem; // 18px
+    --font-size-2xl: 1.25rem; // 20px
+    --font-size-3xl: 1.5rem; // 24px
+    --font-size-4xl: 1.875rem; // 30px
+    --font-size-5xl: 2.25rem; // 36px
+  }
+}
+
+// ダークモード
+@include mix.dark-mode {
+  :root {
+    --background: #{map-get(vars.$colors, white)};
+    --foreground: #{map-get(vars.$colors, black)};
+  }
+}
+
+// ベースとなるHTML/BODYの設定
+html {
+  // ブラウザのデフォルト16pxを基準とする
+  font-size: 100%; // 16px
+
+  // ユーザーがブラウザで文字サイズを変更した場合に対応
+  @include mix.media(lg) {
+    font-size: 112.5%; // 18px (大画面では少し大きく)
+  }
+
+  @include mix.media-max(sm) {
+    font-size: 87.5%; // 14px (小画面では少し小さく)
+  }
+}
+
+html,
+body {
+  margin: 0;
+  padding: 1.5vw;
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-normal);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 共通スタイル */
+
+.mainTitle {
+  text-align: center;
+  font-size: #{map-get(vars.$font-sizes, xxxl)};
+  font-weight: bold;
+}
+.mainContent {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 100px 60px;
+  background-color: #{map-get(vars.$colors, contents)};
+}
