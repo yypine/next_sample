@@ -1,0 +1,22 @@
+@use "../styles/mixins" as mix;
+@use "../styles/variables" as vars;
+.apiPanel {
+  margin: 3em 0 0;
+  padding: 1em;
+  border: 1px solid #ccc;
+  border-radius: 0.5em;
+  background-color: #f9f9f9;
+  @include mix.media(sm) {
+    font-size: #{map-get(vars.$font-sizes, xl)};
+  }
+}
+.success {
+  margin: 3em 0 0;
+  padding: 1em;
+  border: 1px solid #ccc;
+  border-radius: 0.5em;
+  background-color: #f9f9f9;
+  @include mix.media(sm) {
+    font-size: #{map-get(vars.$font-sizes, xl)};
+  }
+}

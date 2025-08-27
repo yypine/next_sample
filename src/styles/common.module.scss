@@ -1,0 +1,6 @@
+@use "../styles/mixins" as mix;
+@use "../styles/variables" as vars;
+.subTitle {
+  margin: 3em 0 0;
+  font-size: #{map-get(vars.$font-sizes, xl)};
+}
