@@ -1,4 +1,5 @@
 @use "variables" as vars;
+@use "sass:map";
 // ブレークポイント定義
 $breakpoints: (
   xs: 480px,
@@ -10,8 +11,8 @@ $breakpoints: (
 
 // メディアクエリミックスイン
 @mixin media($breakpoint) {
-  @if map-has-key($breakpoints, $breakpoint) {
-    @media (min-width: map-get($breakpoints, $breakpoint)) {
+  @if map.has-key($breakpoints, $breakpoint) {
+    @media (min-width: map.get($breakpoints, $breakpoint)) {
       @content;
     }
   } @else {
@@ -21,8 +22,8 @@ $breakpoints: (
 
 // Max-widthバージョン
 @mixin media-max($breakpoint) {
-  @if map-has-key($breakpoints, $breakpoint) {
-    @media (max-width: (map-get($breakpoints, $breakpoint) - 1px)) {
+  @if map.has-key($breakpoints, $breakpoint) {
+    @media (max-width: (map.get($breakpoints, $breakpoint) - 1px)) {
       @content;
     }
   }
@@ -30,8 +31,8 @@ $breakpoints: (
 
 // 範囲指定バージョン
 @mixin media-between($min, $max) {
-  @if map-has-key($breakpoints, $min) and map-has-key($breakpoints, $max) {
-    @media (min-width: map-get($breakpoints, $min)) and (max-width: (map-get($breakpoints, $max) - 1px)) {
+  @if map.has-key($breakpoints, $min) and map.has-key($breakpoints, $max) {
+    @media (min-width: map.get($breakpoints, $min)) and (max-width: (map.get($breakpoints, $max) - 1px)) {
       @content;
     }
   }

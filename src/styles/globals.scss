@@ -1,10 +1,11 @@
 @use "../styles/variables" as vars;
 @use "../styles/mixins" as mix;
+@use "sass:map";
 
 // ルート要素でのベースフォントサイズ設定
 :root {
-  --background: #{map-get(vars.$colors, white)};
-  --foreground: #{map-get(vars.$colors, black)};
+  --background: #{map.get(vars.$colors, white)};
+  --foreground: #{map.get(vars.$colors, black)};
 
   // フォントサイズのCSS変数（レスポンシブ対応）
   --font-size-xs: 0.75rem; // 12px
@@ -39,8 +40,8 @@
 // ダークモード
 @include mix.dark-mode {
   :root {
-    --background: #{map-get(vars.$colors, white)};
-    --foreground: #{map-get(vars.$colors, black)};
+    --background: #{map.get(vars.$colors, white)};
+    --foreground: #{map.get(vars.$colors, black)};
   }
 }
 
@@ -81,12 +82,12 @@ body {
 
 .mainTitle {
   text-align: center;
-  font-size: #{map-get(vars.$font-sizes, xxxl)};
+  font-size: #{map.get(vars.$font-sizes, xxxl)};
   font-weight: bold;
 }
 .mainContent {
   max-width: 1200px;
   margin: 0 auto;
   padding: 100px 60px;
-  background-color: #{map-get(vars.$colors, contents)};
+  background-color: #{map.get(vars.$colors, contents)};
 }
