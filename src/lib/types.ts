@@ -9,8 +9,8 @@ export interface ApiResponse<T> {
 }
 
 export interface SelectedPrefecturesDisplayProps {
-  /** 選択された都道府県コードの配列 */
-  selectedPrefectures: number[];
+  /** 選択された都道府県オブジェクトの配列 */
+  selectedPrefectures: Prefecture[];
 }
 
 export interface PopulationData {
