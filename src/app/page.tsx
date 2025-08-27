@@ -1,38 +1,55 @@
 import PrefectureSelector from "@/components/PrefectureSelector";
-import styles from "@/styles/page.module.scss";
 import { Prefecture } from "@/lib/types";
+import styles from "@/styles/page.module.scss";
 
 /**
- * SSRで内部API Routeから都道府県データを取得
+ * SSRで外部ゆめみAPIから直接都道府県データを取得
+ * 内部API Routeを経由せず、Vercelの静的生成に対応
  */
 async function fetchPrefecturesSSR(): Promise<Prefecture[]> {
   try {
-    // SSRでは絶対URLが必要
-    const baseUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000";
+    const apiBase = process.env.YUMEMI_API_BASE_URL;
+    const apiKey = process.env.YUMEMI_API_KEY;
 
-    const response = await fetch(`${baseUrl}/api/prefectures`, {
-      cache: "no-store", // SSRで毎回最新データを取得
+    // 環境変数チェック
+    if (!apiBase) {
+      console.error("💥 SSR - APIベースURLが設定されていません");
+      return [];
+    }
+    if (!apiKey) {
+      console.error("💥 SSR - APIキーが設定されていません");
+      return [];
+    }
+
+    // 外部APIを直接呼び出し（内部fetchなし）
+    const response = await fetch(`${apiBase}/api/v1/prefectures`, {
+      headers: {
+        "X-API-KEY": apiKey,
+        "Content-Type": "application/json; charset=UTF-8",
+      },
+      // ⚠️ cache設定を削除（デフォルトのキャッシュを使用）
     });
 
     if (!response.ok) {
-      console.error("💥 SSR - API Route エラー:", response.status);
+      console.error("💥 SSR - 外部API エラー:", response.status);
       return [];
     }
-    const data = await response.json();
 
+    const data = await response.json();
     return data.result || [];
   } catch (error) {
-    console.error("💥 SSR - API Route呼び出しエラー:", error);
+    console.error("💥 SSR - 外部API呼び出しエラー:", error);
     return [];
   }
 }
 
 /**
  * メインページコンポーネント（Server Component）
- * SSRで/api/prefecturesから都道府県データを事前取得
+ * SSRで外部ゆめみAPIから都道府県データを事前取得
+ * Vercelの静的生成に対応
  */
 export default async function Home() {
-  // SSRで内部API Routeからデータ取得
+  // SSRで外部APIから直接データ取得
   const prefectures = await fetchPrefecturesSSR();
 
   return (
