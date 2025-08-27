@@ -1,79 +1,46 @@
-"use client";
-
-import { useState } from "react";
+import PrefectureSelector from "@/components/PrefectureSelector";
 import styles from "@/styles/page.module.scss";
-import common from "@/styles/common.module.scss";
-import ApiInfoPanel from "@/components/ApiInfoPanel";
+import { Prefecture } from "@/lib/types";
 
 /**
- * 都道府県のモックデータ
- * 本来はRESAS APIから取得するが、開発初期段階では仮データを使用
- * @todo 後でRESAS APIと接続する
+ * SSRで内部API Routeから都道府県データを取得
  */
-const mockPrefectures = [
-  { prefCode: 1, prefName: "北海道" },
-  { prefCode: 2, prefName: "青森県" },
-  { prefCode: 3, prefName: "岩手県" },
-  { prefCode: 4, prefName: "宮城県" },
-  { prefCode: 5, prefName: "秋田県" },
-  // 5つだけで開始
-];
+async function fetchPrefecturesSSR(): Promise<Prefecture[]> {
+  try {
+    // SSRでは絶対URLが必要
+    const baseUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000";
 
-/**
- * メインページコンポーネント
- * 都道府県別人口推移グラフを表示する
- *
- * 機能:
- * - 都道府県の選択（チェックボックス）
- * - 選択された都道府県の表示
- * - API情報パネルの表示
- * - 人口推移グラフの表示（今後実装予定）
- */
-export default function Home() {
-  // 選択された都道府県のコードを管理するstate
-  const [selectedPrefectures, setSelectedPrefectures] = useState<number[]>([]);
+    const response = await fetch(`${baseUrl}/api/prefectures`, {
+      cache: "no-store", // SSRで毎回最新データを取得
+    });
 
-  /**
-   * 都道府県の選択状態を切り替える関数
-   * チェックボックスがクリックされた時に呼び出される
-   *
-   * @param prefCode - 都道府県コード
-   */
-  const handlePrefectureChange = (prefCode: number) => {
-    if (selectedPrefectures.includes(prefCode)) {
-      setSelectedPrefectures(selectedPrefectures.filter((code) => code !== prefCode));
-    } else {
-      setSelectedPrefectures([...selectedPrefectures, prefCode]);
+    if (!response.ok) {
+      console.error("💥 SSR - API Route エラー:", response.status);
+      return [];
     }
-  };
+    const data = await response.json();
+
+    return data.result || [];
+  } catch (error) {
+    console.error("💥 SSR - API Route呼び出しエラー:", error);
+    return [];
+  }
+}
+
+/**
+ * メインページコンポーネント（Server Component）
+ * SSRで/api/prefecturesから都道府県データを事前取得
+ */
+export default async function Home() {
+  // SSRで内部API Routeからデータ取得
+  const prefectures = await fetchPrefecturesSSR();
 
   return (
     <div className={`${styles.page} mainContent`}>
       <main className={styles.main}>
         <h1 className="mainTitle">都道府県別人口推移グラフ</h1>
-        <div>
-          <h2 className={common.subTitle}>都道府県</h2>
-          <div className={styles.prefectureList}>
-            {/* 都道府県のチェックボックスリストを動的生成 */}
-            {mockPrefectures.map((prefecture) => (
-              <label key={prefecture.prefCode} className={styles.prefectureItem}>
-                <input type="checkbox" checked={selectedPrefectures.includes(prefecture.prefCode)} onChange={() => handlePrefectureChange(prefecture.prefCode)} />
-                <span>{prefecture.prefName}</span>
-              </label>
-            ))}
-          </div>
-        </div>
 
-        {/* 選択された都道府県の表示（選択がある場合のみ） */}
-        {selectedPrefectures.length > 0 && (
-          <div className={styles.selectedInfo}>
-            <h3>選択された都道府県:</h3>
-            <p>{selectedPrefectures.map((code) => mockPrefectures.find((p) => p.prefCode === code)?.prefName).join(", ")}</p>
-          </div>
-        )}
-
-        {/* API情報パネル */}
-        <ApiInfoPanel />
+        <PrefectureSelector prefectures={prefectures} />
       </main>
     </div>
   );
