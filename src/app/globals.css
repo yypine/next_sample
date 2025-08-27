@@ -1,12 +1,12 @@
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #ededed;
+  --foreground: #333;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #ededed;
+    --foreground: #333;
   }
 }
 
@@ -39,4 +39,16 @@ a {
   html {
     color-scheme: dark;
   }
+}
+
+/* 共通スタイル */
+.mainContent {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.mainTitle {
+  font-size: 24px;
+  font-weight: bold;
 }
