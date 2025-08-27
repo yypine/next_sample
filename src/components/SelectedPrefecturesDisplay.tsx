@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import styles from "@/styles/page.module.scss";
 import common from "@/styles/common.module.scss";
 import Highcharts from "highcharts";
-import { SelectedPrefecturesDisplayProps, PopulationApiResponse, Prefecture } from "@/lib/types";
+import { SelectedPrefecturesDisplayProps, PopulationApiResponse } from "@/lib/types";
 
 /**
  * 選択された都道府県の人口データを簡素に表示
@@ -35,7 +35,7 @@ export default function SelectedPrefecturesDisplay({ selectedPrefectures }: Sele
         }
       }
     });
-  }, [selectedPrefectures]);
+  }, [selectedPrefectures, populationData, loading]);
 
   /**
    * Highchartsでグラフを描画
@@ -57,7 +57,7 @@ export default function SelectedPrefecturesDisplay({ selectedPrefectures }: Sele
           data: totalPopulation.data.map((item) => [item.year, item.value]),
         };
       })
-      .filter(Boolean);
+      .filter((item): item is NonNullable<typeof item> => item !== null);
 
     if (series.length === 0) return;
 

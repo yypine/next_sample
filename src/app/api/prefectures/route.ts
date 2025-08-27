@@ -26,6 +26,17 @@ export async function GET() {
     const data = await response.json();
     return NextResponse.json(data);
   } catch (error) {
-    return NextResponse.json({ error: "データの取得に失敗しました（都道府県データ）" }, { status: 500 });
+    // エラー変数を使用してログ出力
+    console.error("都道府県データ取得エラー:", error);
+
+    // エラーの詳細情報を含むレスポンス
+    const errorMessage = error instanceof Error ? error.message : "不明なエラー";
+    return NextResponse.json(
+      {
+        error: "データの取得に失敗しました（都道府県データ）",
+        details: errorMessage,
+      },
+      { status: 500 }
+    );
   }
 }

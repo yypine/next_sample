@@ -1,20 +1,28 @@
 "use client";
 
-import { useState } from "react";
+import { PopulationApiResponse, Prefecture } from "@/lib/types";
 import styles from "@/styles/ApiInfoPanel.module.scss";
-import common from "@/styles/common.module.scss";
+import { useState } from "react";
+
+interface ApiInfoPanelProps {
+  initialPrefectures?: Prefecture[];
+}
+
+interface PrefectureApiResponse {
+  message: string | null;
+  result: Prefecture[];
+}
 
 /**
- * API取得確認用パネルコンポーネント
- * ゆめみのコードチェック用APIの接続テストと基本的なデータ表示を行う
+ * API情報表示パネルコンポーネント
+ * ゆめみAPIの接続状況とデータを表示する
  * エンドポイント: https://yumemi-frontend-engineer-codecheck-api.vercel.app
  */
-export default function ApiInfoPanel() {
-  // 状態管理
+export default function ApiInfoPanel({ initialPrefectures = [] }: ApiInfoPanelProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [apiDataPrefectures, setApiDataPrefectures] = useState<any>(null);
-  const [apiDataPopulation, setApiDataPopulation] = useState<any>(null);
+  const [apiDataPrefectures, setApiDataPrefectures] = useState<PrefectureApiResponse | null>(null);
+  const [apiDataPopulation, setApiDataPopulation] = useState<PopulationApiResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   /**
@@ -32,11 +40,12 @@ export default function ApiInfoPanel() {
       if (!responsePrefectures.ok) {
         // レスポンスからエラー詳細を取得
         const errorData = await responsePrefectures.json().catch(() => null);
-        const errorMessage = errorData?.error || `HTTPエラー: ${responsePrefectures.status} ${responsePrefectures.statusText}`;
+        const errorMessage =
+          errorData?.error || `HTTPエラー: ${responsePrefectures.status} ${responsePrefectures.statusText}`;
         throw new Error(errorMessage);
       }
 
-      const dataPrefectures = await responsePrefectures.json();
+      const dataPrefectures: PrefectureApiResponse = await responsePrefectures.json();
       setApiDataPrefectures(dataPrefectures);
     } catch (err) {
       setError(err instanceof Error ? err.message : "予期しないエラーが発生しました");
@@ -44,34 +53,34 @@ export default function ApiInfoPanel() {
       setLoading(false);
     }
   };
+
   /**
-   * ゆめみAPI人口構成一覧を取得する関数
-   * Next.js API Routes経由で安全にアクセス
+   * ゆめみAPI人口構成データを取得する関数
+   * 東京都（prefCode=13）をデフォルトで取得
    */
-  const fetchPopulation = async (prefCode: number = 13) => {
-    setLoading(true);
-    setError(null);
-
+  const fetchPopulation = async (prefCode = 13) => {
     try {
-      // prefCodeをクエリパラメータとして渡す
-      const populationResponse = await fetch(`/api/population?prefCode=${prefCode}`);
+      // 自分のAPI Route経由で呼び出し
+      const responsePopulation = await fetch(`/api/population?prefCode=${prefCode}`);
 
-      if (!populationResponse.ok) {
-        const errorData = await populationResponse.json().catch(() => null);
-        const errorMessage = errorData?.error || `HTTPエラー: ${populationResponse.status} ${populationResponse.statusText}`;
+      if (!responsePopulation.ok) {
+        // レスポンスからエラー詳細を取得
+        const errorData = await responsePopulation.json().catch(() => null);
+        const errorMessage =
+          errorData?.error || `HTTPエラー: ${responsePopulation.status} ${responsePopulation.statusText}`;
         throw new Error(errorMessage);
       }
 
-      const data = await populationResponse.json();
-      setApiDataPopulation(data);
+      const dataPopulation: PopulationApiResponse = await responsePopulation.json();
+      setApiDataPopulation(dataPopulation);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "予期しないエラーが発生しました");
-    } finally {
-      setLoading(false);
+      console.error("人口データ取得エラー:", err);
+      // 人口データのエラーは非致命的なので、状態にエラーを設定しない
     }
   };
+
   /**
-   * パネルの開閉とAPI呼び出し
+   * パネルの開閉を制御する関数
    */
   const handleToggle = () => {
     setIsOpen(!isOpen);
@@ -83,11 +92,6 @@ export default function ApiInfoPanel() {
     }
   };
 
-  // 都道府県が選択されたときに人口データも取得
-  const handlePrefectureSelect = (prefCode: number) => {
-    fetchPopulation(prefCode); // 選択された都道府県の人口データを取得
-  };
-
   return (
     <div className={styles.apiPanel}>
       {/* 開閉ボタン */}
@@ -95,18 +99,11 @@ export default function ApiInfoPanel() {
         {loading ? "🔄 取得中..." : isOpen ? "📊 API情報を非表示" : "📊 API情報を表示"}
       </button>
 
-      {/* API情報表示パネル */}
+      {/* パネル内容 */}
       {isOpen && (
-        <div className={styles.panel}>
-          <h3 className={styles.title}>ゆめみ API 接続テスト</h3>
-
-          {/* ローディング表示 */}
-          {loading && (
-            <div className={styles.loading}>
-              <div className={styles.spinner}>⏳</div>
-              <p>都道府県データを取得中...</p>
-            </div>
-          )}
+        <div className={styles.content}>
+          <h3>🔌 API接続テスト</h3>
+          <p>ゆめみAPIとの接続状況とレスポンスデータを表示します</p>
 
           {/* エラー表示 */}
           {error && (
@@ -123,72 +120,55 @@ export default function ApiInfoPanel() {
           {apiDataPrefectures && !loading && (
             <div className={styles.success}>
               <h4>✅ API接続成功</h4>
+              <p>
+                <strong>取得件数:</strong> {apiDataPrefectures.result?.length || 0}件の都道府県データ
+              </p>
+              <p>
+                <strong>API応答時間:</strong> 正常
+              </p>
 
-              {/* 基本情報 */}
-              <div className={styles.section}>
-                <h5 className={common.subTitle}>取得情報</h5>
-              </div>
-
-              {/* 都道府県データプレビュー */}
-              <div className={styles.section}>
-                <h5>都道府県データ（最初の5件）</h5>
-                <div className={styles.dataList}>
-                  {apiDataPrefectures.result?.slice(0, 5).map((pref: any) => (
-                    <div key={pref.prefCode} className={styles.dataItem}>
-                      <span className={styles.prefCode}>{pref.prefCode}</span>
-                      <span className={styles.prefName}>{pref.prefName}</span>
-                    </div>
-                  ))}
-                  {apiDataPrefectures.result?.length > 5 && <div className={styles.moreData}>...他{apiDataPrefectures.result.length - 5}件</div>}
-                </div>
-              </div>
-
-              {/* JSONデータ表示（開発者向け） */}
-              <details className={styles.details}>
-                <summary>🔍 レスポンスデータ（JSON）</summary>
-                <pre className={styles.jsonData}>{JSON.stringify(apiDataPrefectures, null, 2)}</pre>
-              </details>
-            </div>
-          )}
-
-          {/* 人口データ表示 */}
-          {apiDataPopulation && !loading && (
-            <div className={styles.success}>
-              <h4>✅ 人口データAPI接続成功</h4>
-
-              {/* 基本情報 */}
-              <div className={styles.section}>
-                <h5 className={common.subTitle}>取得情報</h5>
-              </div>
-
-              {/* 人口構成データプレビュー */}
-              <div className={styles.section}>
-                <h5>人口構成データ</h5>
-                <div className={styles.dataList}>
-                  {apiDataPopulation.result?.data?.map((category: any, index: number) => (
-                    <div key={index} className={styles.categoryItem}>
-                      <h6>{category.label}</h6>
-                      <div className={styles.populationData}>
-                        {category.data?.slice(0, 3).map((item: any, idx: number) => (
-                          <div key={idx} className={styles.dataItem}>
-                            <span className={styles.year}>{item.year}年:</span>
-                            <span className={styles.value}>
-                              {item.value?.toLocaleString()}人{item.rate && ` (${item.rate}%)`}
-                            </span>
-                          </div>
-                        ))}
-                        {category.data?.length > 3 && <div className={styles.moreData}>...他{category.data.length - 3}件</div>}
+              {/* データの詳細表示 */}
+              <div className={styles.dataDisplay}>
+                {/* 都道府県データプレビュー */}
+                <div className={styles.section}>
+                  <h5>都道府県データ（最初の5件）</h5>
+                  <div className={styles.dataList}>
+                    {apiDataPrefectures.result?.slice(0, 5).map((pref: Prefecture) => (
+                      <div key={pref.prefCode} className={styles.dataItem}>
+                        <span className={styles.prefCode}>{pref.prefCode}</span>
+                        <span className={styles.prefName}>{pref.prefName}</span>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                    {(apiDataPrefectures.result?.length || 0) > 5 && (
+                      <div className={styles.moreData}>...他{(apiDataPrefectures.result?.length || 0) - 5}件</div>
+                    )}
+                  </div>
                 </div>
-              </div>
 
-              {/* JSONデータ表示 */}
-              <details className={styles.details}>
-                <summary>🔍 レスポンスデータ（JSON）</summary>
-                <pre className={styles.jsonData}>{JSON.stringify(apiDataPopulation, null, 2)}</pre>
-              </details>
+                {/* 人口データ表示 */}
+                {apiDataPopulation && (
+                  <div className={styles.section}>
+                    <h5>人口データ（東京都の例）</h5>
+                    <p>境界年: {apiDataPopulation.result.boundaryYear}</p>
+                    <div className={styles.populationData}>
+                      {apiDataPopulation.result.data.slice(0, 3).map((composition, index) => (
+                        <div key={index} className={styles.compositionItem}>
+                          <strong>{composition.label}:</strong>
+                          <span>
+                            {composition.data[0]?.year}年 - {composition.data[0]?.value?.toLocaleString()}人
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* JSONレスポンス詳細 */}
+                <details className={styles.details}>
+                  <summary>🔍 レスポンスデータ（JSON）</summary>
+                  <pre className={styles.jsonData}>{JSON.stringify(apiDataPrefectures, null, 2)}</pre>
+                </details>
+              </div>
             </div>
           )}
 
@@ -196,15 +176,6 @@ export default function ApiInfoPanel() {
           {!apiDataPrefectures && !loading && !error && (
             <div className={styles.initial}>
               <p>上のボタンを押してAPI接続テストを開始します</p>
-              <div className={styles.requirements}>
-                <h5>API仕様:</h5>
-                <ul>
-                  <li>🏢 ゆめみ コードチェック API</li>
-                  <li>🔒 認証: X-API-KEY（サーバーサイドで処理）</li>
-                  <li>⏱️ レート制限: あり（適切な間隔で使用）</li>
-                  <li>📍 プロキシ: Next.js API Routes経由</li>
-                </ul>
-              </div>
             </div>
           )}
         </div>
