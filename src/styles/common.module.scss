@@ -1,8 +1,34 @@
-@use "../styles/mixins" as mix;
-@use "../styles/variables" as vars;
+@use "mixins" as mix;
+@use "variables" as vars;
 @use "sass:map";
 
+/* 共通スタイル */
+.mainContent {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 100px 60px;
+  border-radius: 30px;
+  background-color: rgba(map.get(vars.$colors, primary), 0.5);
+  @include mix.media-max(md) {
+    padding: 100px 40px;
+  }
+  @include mix.media-max(sm) {
+    border-radius: 0;
+    padding: 30px 20px;
+  }
+}
+.mainTitle {
+  text-align: center;
+  color: #{map.get(vars.$colors, accent-dark)};
+  font-size: #{map.get(vars.$font-sizes, xxxl)};
+  font-weight: bold;
+}
+
 .subTitle {
-  margin: 3em 0 0;
+  margin: 4em 0 0.5em;
+  color: #{map.get(vars.$colors, accent)};
   font-size: #{map.get(vars.$font-sizes, xl)};
+  @include mix.media-max(sm) {
+    margin: 2em 0 0.5em;
+  }
 }

@@ -1,5 +1,6 @@
-@use "../styles/mixins" as mix;
-@use "../styles/variables" as vars;
+@use "mixins" as mix;
+@use "variables" as vars;
+@use "sass:map";
 .apiPanel {
   margin: 3em 0 0;
   padding: 1em;

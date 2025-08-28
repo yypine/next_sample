@@ -1,5 +1,6 @@
 import PrefectureSelector from "@/components/PrefectureSelector";
 import { Prefecture } from "@/lib/types";
+import common from "@/styles/common.module.scss";
 import styles from "@/styles/page.module.scss";
 
 /**
@@ -53,9 +54,9 @@ export default async function Home() {
   const prefectures = await fetchPrefecturesSSR();
 
   return (
-    <div className={`${styles.page} mainContent`}>
+    <div className={`${styles.page} ${common.mainContent}`}>
       <main className={styles.main}>
-        <h1 className="mainTitle">都道府県別人口推移グラフ</h1>
+        <h1 className={common.mainTitle}>都道府県別人口推移グラフ</h1>
 
         <PrefectureSelector prefectures={prefectures} />
       </main>

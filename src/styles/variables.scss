@@ -1,17 +1,18 @@
+@use "sass:map";
 // カラーパレット
 $colors: (
-  primary: #7fb751,
-  primary-light: #64b5f6,
-  primary-dark: #3f9046,
+  primary: #f3f0e8,
+  accent: #7fb751,
+  accent-light: #64b5f6,
+  accent-dark: #3f9046,
   secondary: #eed354,
   success: #6c9ecd,
   warning: #ed702d,
   error: #ea3e95,
   info: #2196f3,
-  contents: #fff,
 
   // グレースケール
-  white: #f3f0e8,
+  white: #fff,
   black: #2c2013,
   gray-50: #fafafa,
   gray-100: #f5f5f5,
@@ -39,6 +40,5 @@ $font-sizes: (
   // 20px
   xxl: 1.5rem,
   // 24px
-  xxxl: 2rem,
-  // 32px
+  xxxl: 2rem, // 32px
 );

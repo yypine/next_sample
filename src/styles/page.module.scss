@@ -1,12 +1,12 @@
-@use "../styles/mixins" as mix;
-@use "../styles/variables" as vars;
+@use "mixins" as mix;
+@use "variables" as vars;
 
 .prefectureList {
   margin: 0.5em 0 0;
   display: flex;
   flex-wrap: wrap;
   @include mix.media(sm) {
-    //font-size: #{map-get(vars.$font-sizes, xxxl)};
+    margin: 0.2em 0 0;
   }
   label {
     padding: 0.5em 0.5em 0.5em 0;

@@ -1,7 +1,6 @@
 "use client";
 
 import { PopulationApiResponse, SelectedPrefecturesDisplayProps } from "@/lib/types";
-import common from "@/styles/common.module.scss";
 import styles from "@/styles/SelectedPrefecturesDisplay.module.scss";
 import Highcharts from "highcharts";
 import { useEffect, useRef, useState } from "react";
@@ -139,12 +138,9 @@ export default function SelectedPrefecturesDisplay({ selectedPrefectures }: Sele
 
   return (
     <div className={styles.selectedInfo}>
-      <small>({selectedPrefectures.length}件選択中)</small>
-
       {/* Highchartsグラフ */}
       {selectedPrefectures.length > 0 && (
         <div className={styles.chartContainer}>
-          <h4 className={common.subTitle}>人口推移グラフ</h4>
           {/* 人口タイプを切り替えるためのUI */}
           <div className={styles.populationTypeSelector}>
             <label>

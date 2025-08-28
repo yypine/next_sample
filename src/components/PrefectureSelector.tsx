@@ -3,7 +3,7 @@
 import SelectedPrefecturesDisplay from "@/components/SelectedPrefecturesDisplay";
 import { Prefecture } from "@/lib/types";
 import common from "@/styles/common.module.scss";
-import styles from "@/styles/page.module.scss";
+import styles from "@/styles/PrefectureSelector.module.scss";
 import { useEffect, useState } from "react";
 
 interface PrefectureSelectorProps {
@@ -52,7 +52,6 @@ export default function PrefectureSelector({ prefectures }: PrefectureSelectorPr
           </label>
         ))}
       </div>
-
       <SelectedPrefecturesDisplay selectedPrefectures={selectedPrefectures} />
     </div>
   );

@@ -1,5 +1,5 @@
-@use "../styles/variables" as vars;
-@use "../styles/mixins" as mix;
+@use "mixins" as mix;
+@use "variables" as vars;
 @use "sass:map";
 
 // ルート要素でのベースフォントサイズ設定
@@ -66,6 +66,9 @@ body {
   padding: 1.5vw;
   max-width: 100vw;
   overflow-x: hidden;
+  @include mix.media-max(sm) {
+    padding: 0;
+  }
 }
 
 body {
@@ -76,18 +79,4 @@ body {
   line-height: var(--line-height-normal);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-/* 共通スタイル */
-
-.mainTitle {
-  text-align: center;
-  font-size: #{map.get(vars.$font-sizes, xxxl)};
-  font-weight: bold;
-}
-.mainContent {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 100px 60px;
-  background-color: #{map.get(vars.$colors, contents)};
 }

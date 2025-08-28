@@ -1,5 +1,121 @@
-@use "../styles/mixins" as mix;
-@use "../styles/variables" as vars;
+@use "mixins" as mix;
+@use "variables" as vars;
+@use "sass:map";
+//インフォwrapper
+.selectedInfo {
+  margin: 4em 0 0;
+  padding: 2em 15px 3em;
+  border-radius: 15px;
+  background-color: rgba(map.get(vars.$colors, white), 1);
+  @include mix.media-max(sm) {
+    padding: 1em 10px 3em;
+  }
+}
+//ラジオボタンセレクター
+.populationTypeSelector {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4% 1%;
+  margin: 0 0 2em;
+  padding: 1.5rem 2%;
+  @include mix.media-max(sm) {
+    gap: 10px 3%;
+  }
+  // ラベル全体のスタイル
+  label {
+    position: relative;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    padding: 1em 1%;
+    border-radius: 12px;
+    background: #{map.get(vars.$colors, white)};
+    border: 2px solid #{map.get(vars.$colors, gray-200)};
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-weight: 500;
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: #{map.get(vars.$colors, gray-700)};
+    min-width: 120px;
+    justify-content: center;
+    text-align: center;
+    width: 21%;
+    @include mix.media-max(sm) {
+      width: 45%;
+    }
+    // ホバー効果
+    &:hover {
+      border-color: #{map.get(vars.$colors, accent-dark)};
+      background: rgba(map.get(vars.$colors, accent), 1);
+      color: #{map.get(vars.$colors, white)};
+    }
+
+    // アクティブ効果
+    &:active {
+    }
+
+    // ラジオボタンを非表示
+    input[type="radio"] {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+      margin: 0;
+      padding: 0;
+    }
+
+    // 選択状態のスタイル
+    &:has(input:checked) {
+      background-color: rgba(map.get(vars.$colors, accent), 1);
+      border-color: #{map.get(vars.$colors, accent-dark)};
+      color: #{map.get(vars.$colors, white)};
+
+      // チェックマークアイコンを追加
+      &::before {
+        content: "✓";
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 1.1rem;
+        font-weight: bold;
+        color: #{map.get(vars.$colors, white)};
+        opacity: 1;
+        animation: checkmark 0.3s ease-in-out;
+      }
+
+      // 選択時のホバー効果
+      &:hover {
+        background: linear-gradient(135deg, #{map.get(vars.$colors, primary-dark)}, #{map.get(vars.$colors, primary)});
+      }
+    }
+
+    // ラベルテキストのスタイル
+    span {
+      position: relative;
+      z-index: 1;
+      transition: all 0.3s ease;
+    }
+  }
+}
+
+// チェックマークアニメーション
+@keyframes checkmark {
+  0% {
+    opacity: 0;
+    transform: translateY(-50%) scale(0.5);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-50%) scale(1.2);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(-50%) scale(1);
+  }
+}
 .chartContainer {
   min-height: 450px; // チャート高さ(400px) + 余白
   position: relative;
