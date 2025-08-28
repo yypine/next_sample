@@ -2,7 +2,7 @@
 
 import { PopulationApiResponse, SelectedPrefecturesDisplayProps } from "@/lib/types";
 import common from "@/styles/common.module.scss";
-import styles from "@/styles/page.module.scss";
+import styles from "@/styles/SelectedPrefecturesDisplay.module.scss";
 import Highcharts from "highcharts";
 import { useEffect, useRef, useState } from "react";
 
@@ -57,6 +57,10 @@ export default function SelectedPrefecturesDisplay({ selectedPrefectures }: Sele
    */
   useEffect(() => {
     if (!chartRef.current || selectedPrefectures.length === 0) return;
+
+    // 🔧 現在のスクロール位置を保存
+    const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+
     // グラフ用のデータを準備
     const series = selectedPrefectures
       .filter((prefecture) => populationData[prefecture.prefCode])
@@ -117,6 +121,11 @@ export default function SelectedPrefecturesDisplay({ selectedPrefectures }: Sele
 
     // チャートを作成
     const chart = Highcharts.chart(chartRef.current, options);
+
+    // 🔧 スクロール位置を復元
+    setTimeout(() => {
+      window.scrollTo(0, scrollPosition);
+    }, 0);
 
     // クリーンアップ
     return () => {
