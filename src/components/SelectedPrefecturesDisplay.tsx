@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import styles from "@/styles/page.module.scss";
+import { PopulationApiResponse, SelectedPrefecturesDisplayProps } from "@/lib/types";
 import common from "@/styles/common.module.scss";
+import styles from "@/styles/page.module.scss";
 import Highcharts from "highcharts";
-import { SelectedPrefecturesDisplayProps, PopulationApiResponse } from "@/lib/types";
+import { useEffect, useRef, useState } from "react";
 
 /**
  * 選択された都道府県の人口データを簡素に表示
@@ -42,7 +42,6 @@ export default function SelectedPrefecturesDisplay({ selectedPrefectures }: Sele
    */
   useEffect(() => {
     if (!chartRef.current || selectedPrefectures.length === 0) return;
-
     // グラフ用のデータを準備
     const series = selectedPrefectures
       .filter((prefecture) => populationData[prefecture.prefCode])
