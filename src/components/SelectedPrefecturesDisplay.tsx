@@ -10,9 +10,24 @@ import { useEffect, useRef, useState } from "react";
  * 選択された都道府県の人口データを簡素に表示
  */
 export default function SelectedPrefecturesDisplay({ selectedPrefectures }: SelectedPrefecturesDisplayProps) {
+  // populationData変数の構造と内容について
+  // 構造: 都道府県コードをキーとし、各都道府県の人口データを格納するオブジェクト
+  // 内容: 都道府県ごとに総人口、年少人口、生産年齢人口、老年人口が同列に格納されている
+  // 例: { 13: { message: null, result: { data: [...] } }, ... }
   const [populationData, setPopulationData] = useState<Record<number, PopulationApiResponse>>({});
+  const [populationType, setPopulationType] = useState<"総人口" | "年少人口" | "生産年齢人口" | "老年人口">("総人口");
   const [loading, setLoading] = useState<Record<number, boolean>>({});
   const chartRef = useRef<HTMLDivElement>(null);
+
+  // 🐛 デバッグ用：populationDataを常に監視
+  useEffect(() => {
+    console.log("📊 populationData更新:", populationData);
+  }, [populationData, selectedPrefectures]);
+
+  // 🐛 デバッグ用：populationTypeを常に監視
+  useEffect(() => {
+    console.log("📊 populationType:", populationType);
+  }, [populationType]);
 
   /**
    * 人口データを取得
@@ -47,7 +62,7 @@ export default function SelectedPrefecturesDisplay({ selectedPrefectures }: Sele
       .filter((prefecture) => populationData[prefecture.prefCode])
       .map((prefecture) => {
         const data = populationData[prefecture.prefCode];
-        const totalPopulation = data.result.data.find((item) => item.label === "総人口");
+        const totalPopulation = data.result.data.find((item) => item.label === populationType);
 
         if (!totalPopulation) return null;
 
@@ -67,7 +82,7 @@ export default function SelectedPrefecturesDisplay({ selectedPrefectures }: Sele
         height: 400,
       },
       title: {
-        text: "都道府県別人口推移比較",
+        text: populationType,
       },
       xAxis: {
         title: {
@@ -107,7 +122,7 @@ export default function SelectedPrefecturesDisplay({ selectedPrefectures }: Sele
     return () => {
       chart.destroy();
     };
-  }, [selectedPrefectures, populationData]);
+  }, [selectedPrefectures, populationData, populationType]);
 
   if (selectedPrefectures.length === 0) {
     return null;
@@ -121,6 +136,46 @@ export default function SelectedPrefecturesDisplay({ selectedPrefectures }: Sele
       {selectedPrefectures.length > 0 && (
         <div className={styles.chartContainer}>
           <h4 className={common.subTitle}>人口推移グラフ</h4>
+          {/* 人口タイプを切り替えるためのUI */}
+          <div className={styles.populationTypeSelector}>
+            <label>
+              <input
+                type="radio"
+                name="populationType"
+                value="総人口"
+                defaultChecked
+                onChange={() => setPopulationType("総人口")}
+              />
+              総人口
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="populationType"
+                value="年少人口"
+                onChange={() => setPopulationType("年少人口")}
+              />
+              年少人口
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="populationType"
+                value="生産年齢人口"
+                onChange={() => setPopulationType("生産年齢人口")}
+              />
+              生産年齢人口
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="populationType"
+                value="老年人口"
+                onChange={() => setPopulationType("老年人口")}
+              />
+              老年人口
+            </label>
+          </div>
           <div ref={chartRef} className={styles.chart}></div>
         </div>
       )}
